@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>欢乐合成大西瓜</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FF4B2B',
+                        secondary: '#FFA500',
+                        tertiary: '#9ACD32',
+                        background: '#E4F5FF',
+                        grid: '#A1B9E0',
+                        fruit: '#FF69B4',
+                    },
+                    fontFamily: {
+                        game: ['"PingFang SC"', '"Microsoft YaHei"', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .game-shadow {
+                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3), 0 0 30px rgba(255, 215, 0, 0.4);
+            }
+            .btn-gradient {
+                background: linear-gradient(to right, #ff416c, #ff4b2b);
+            }
+            .btn-gradient-secondary {
+                background: linear-gradient(to right, #2193b0, #6dd5ed);
+            }
+            .grid-bg {
+                background: linear-gradient(160deg, #e4f5ff 0%, #c2e9fb 100%);
+            }
+            .fruit-appear {
+                animation: appear 0.3s ease-out;
+            }
+            .merge-pulse {
+                animation: pulse 0.8s ease-out forwards;
+            }
+            .tool-fly {
+                animation: toolFly 1s ease-out forwards;
+            }
+            .toast-fade {
+                animation: fadeInOut 2s forwards;
+            }
+            @keyframes appear {
+                0% {
+                    transform: scale(0);
+                    opacity: 0;
+                }
+                100% {
+                    transform: scale(1);
+                    opacity: 1;
+                }
+            }
+            @keyframes pulse {
+                0% {
+                    transform: scale(0.5);
+                    opacity: 0.8;
+                }
+                100% {
+                    transform: scale(2);
+                    opacity: 0;
+                }
+            }
+            @keyframes toolFly {
+                0% {
+                    transform: scale(1);
+                    opacity: 1;
+                }
+                100% {
+                    transform: translateY(-100px) scale(1.5);
+                    opacity: 0;
+                }
+            }
+            @keyframes fadeInOut {
+                0% {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                10%,
+                90% {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+                100% {
+                    opacity: 0;
+                    transform: translateY(-20px);
+                }
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-blue-900 via-red-600 to-yellow-500 min-h-screen flex justify-center items-center p-4 font-game">
+    <div class="game-container max-w-md w-full h-[95vh] bg-white/95 rounded-3xl game-shadow overflow-hidden flex flex-col relative">
+        <!-- 顶部信息栏 -->
+        <div class="top-bar bg-gradient-to-r from-primary to-secondary p-3 flex justify-between items-center text-white shadow-lg relative overflow-hidden">
+            <div class="level-indicator bg-black/25 rounded-full px-3 py-1 flex items-center gap-2">
+                <span class="text-sm font-bold">关卡</span>
+                <div class="level-box bg-white/20 rounded-full px-2 py-0.5">
+                    <p id="level" class="text-lg font-bold">1</p>
+                </div>
+            </div>
+
+            <div class="score-box absolute left-1/2 transform -translate-x-1/2 bg-black/25 rounded-full px-6 py-1 text-center">
+                <p id="score" class="text-2xl font-bold tracking-wider">0</p>
+            </div>
+
+            <div class="theme-selector flex items-center gap-2">
+                <span class="text-sm font-bold">主题</span>
+                <div class="theme-buttons flex gap-1">
+                    <div class="theme-btn w-5 h-5 rounded-full bg-fruit border-2 border-white cursor-pointer active" data-theme="fruit"></div>
+                    <div class="theme-btn w-5 h-5 rounded-full bg-yellow-400 border-2 border-transparent cursor-pointer" data-theme="candy"></div>
+                    <div class="theme-btn w-5 h-5 rounded-full bg-red-500 border-2 border-transparent cursor-pointer" data-theme="china"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 目标面板 -->
+        <div class="target-panel bg-white/95 rounded-b-2xl shadow-lg p-2 border-t-2 border-primary flex justify-around items-center mb-1">
+            <div class="target-item flex flex-col items-center">
+                <div class="next-fruit-label text-xs text-gray-600 font-bold">下一个</div>
+                <div class="next-fruit w-10 h-10 rounded-full bg-fruit flex items-center justify-center text-white text-xl font-bold shadow-md border-2 border-white" id="nextFruit">🍎</div>
+            </div>
+
+            <div class="target-item flex flex-col items-center">
+                <div class="target-text text-sm font-bold"><span id="targetCount">0/1</span></div>
+                <div class="target-icon w-8 h-8 rounded-full bg-fruit flex items-center justify-center text-white text-lg shadow-md">🍉</div>
+            </div>
+
+            <div class="target-item flex flex-col items-center">
+                <div class="steps-label text-xs text-gray-600 font-bold">步数</div>
+                <div class="steps-value w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 flex items-center justify-center text-white text-lg font-bold shadow-md" id="steps">50</div>
+            </div>
+        </div>
+
+        <!-- 游戏区域 -->
+        <div class="game-area flex-1 relative overflow-hidden grid-bg p-3 flex items-center justify-center">
+            <div class="game-grid-container relative w-full h-full">
+                <div class="game-grid absolute top-0 left-0 right-0 bottom-0 grid grid-cols-8 grid-rows-8 rounded-3xl border-4 border-blue-300 shadow-inner"></div>
+            </div>
+        </div>
+
+        <!-- 道具栏 -->
+        <div class="tools-container p-2 bg-white/90 rounded-2xl mx-3 mb-3 shadow-md">
+            <div class="tools grid grid-cols-5 gap-1">
+                <div class="tool-btn relative flex flex-col items-center justify-center p-1.5 rounded-xl cursor-pointer hover:bg-gray-100 transition-all" data-tool="hammer">
+                    <div class="tool-icon text-xl">🔨</div>
+                    <div class="tool-count absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center" data-count="1">1</div>
+                    <div class="tool-ad-label absolute -bottom-1 right-1 bg-secondary text-white text-[9px] font-bold rounded px-1 py-0.5 hidden">AD</div>
+                </div>
+
+                <div class="tool-btn relative flex flex-col items-center justify-center p-1.5 rounded-xl cursor-pointer hover:bg-gray-100 transition-all" data-tool="swap">
+                    <div class="tool-icon text-xl">🔄</div>
+                    <div class="tool-count absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center" data-count="1">1</div>
+                    <div class="tool-ad-label absolute -bottom-1 right-1 bg-secondary text-white text-[9px] font-bold rounded px-1 py-0.5 hidden">AD</div>
+                </div>
+
+                <div class="tool-btn relative flex flex-col items-center justify-center p-1.5 rounded-xl cursor-pointer hover:bg-gray-100 transition-all" data-tool="freeze">
+                    <div class="tool-icon text-xl">🔀</div>
+                    <div class="tool-count absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center" data-count="1">1</div>
+                    <div class="tool-ad-label absolute -bottom-1 right-1 bg-secondary text-white text-[9px] font-bold rounded px-1 py-0.5 hidden">AD</div>
+                </div>
+
+                <div class="tool-btn relative flex flex-col items-center justify-center p-1.5 rounded-xl cursor-pointer hover:bg-gray-100 transition-all" data-tool="bomb">
+                    <div class="tool-icon text-xl">💣</div>
+                    <div class="tool-count absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center" data-count="0">0</div>
+                    <div class="tool-ad-label absolute -bottom-1 right-1 bg-secondary text-white text-[9px] font-bold rounded px-1 py-0.5 hidden">AD</div>
+                </div>
+
+                <div class="tool-btn relative flex flex-col items-center justify-center p-1.5 rounded-xl cursor-pointer hover:bg-gray-100 transition-all" data-tool="addSteps">
+                    <div class="tool-icon text-xl">+5</div>
+                    <div class="tool-count absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center" data-count="1">1</div>
+                    <div class="tool-ad-label absolute -bottom-1 right-1 bg-secondary text-white text-[9px] font-bold rounded px-1 py-0.5 hidden">AD</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 游戏结束弹窗 -->
+        <div class="game-overlay absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-500" id="gameOverlay">
+            <div class="game-modal bg-white rounded-3xl p-6 text-center max-w-[90%] transform scale-80 transition-transform duration-500 shadow-2xl">
+                <h2 class="modal-title text-2xl font-bold text-primary mb-4" id="modalTitle">恭喜过关！</h2>
+                <p class="modal-message text-gray-700 mb-6" id="modalMessage">你成功合成了大西瓜！</p>
+
+                <div class="modal-stats grid grid-cols-3 gap-3 mb-6">
+                    <div class="stat-box bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl p-3 text-white">
+                        <div class="stat-value text-2xl font-bold" id="finalScore">0</div>
+                        <div class="stat-label text-sm">分数</div>
+                    </div>
+
+                    <div class="stat-box bg-gradient-to-r from-blue-500 to-cyan-600 rounded-xl p-3 text-white">
+                        <div class="stat-value text-2xl font-bold" id="finalLevel">1</div>
+                        <div class="stat-label text-sm">关卡</div>
+                    </div>
+
+                    <div class="stat-box bg-gradient-to-r from-green-500 to-teal-600 rounded-xl p-3 text-white">
+                        <div class="stat-value text-2xl font-bold" id="finalSteps">0</div>
+                        <div class="stat-label text-sm">剩余步数</div>
+                    </div>
+                </div>
+
+                <div class="modal-buttons flex flex-wrap justify-center gap-3">
+                    <button class="modal-btn btn-gradient text-white font-bold py-2 px-6 rounded-full shadow-lg hover:shadow-xl transition-all" id="nextLevelBtn">下一关</button>
+                    <button class="modal-btn btn-gradient-secondary text-white font-bold py-2 px-6 rounded-full shadow-lg hover:shadow-xl transition-all" id="restartBtn">重新开始</button>
+                    <button class="modal-btn bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold py-2 px-6 rounded-full shadow-lg hover:shadow-xl transition-all hidden" id="reviveBtn">
+                        <i class="fa fa-play-circle mr-1"></i> 看广告复活
+                    </button>
+                    <button class="modal-btn btn-gradient-secondary text-white font-bold py-2 px-6 rounded-full shadow-lg hover:shadow-xl transition-all hidden" id="continueBtn">继续游戏</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 无需确认提示容器 -->
+        <div id="toast-container" class="fixed bottom-20 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none"></div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+
+</html>

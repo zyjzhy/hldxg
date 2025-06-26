@@ -1,0 +1,263 @@
+/* 基础样式 */
+body {
+    overflow: hidden;
+}
+
+/* 游戏容器 */
+.game-container {
+    max-width: 400px;
+}
+
+.game-grid-container {
+    position: relative !important;
+}
+
+.game-grid {
+    position: absolute !important;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: block !important;
+    pointer-events: auto;
+}
+
+.game-grid::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: linear-gradient(#a1b9e0 1px, transparent 1px),
+        linear-gradient(90deg, #a1b9e0 1px, transparent 1px);
+    background-size: 12.5% 12.5%; /* 100% / 8 = 12.5% */
+    pointer-events: none;
+    border-radius: 12px;
+}
+
+.game-grid > div {
+    background: rgba(214, 228, 255, 0.2);
+    transition: all 0.2s;
+}
+
+.game-grid > div:hover {
+    background: rgba(214, 228, 255, 0.4);
+}
+
+/* 水果样式 */
+.fruit {
+    position: absolute;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.3s;
+    z-index: 5;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    animation: appear 0.3s ease-out;
+    user-select: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.fruit:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.fruit.selected {
+    transform: scale(1.2);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    z-index: 20;
+}
+
+/* 道具按钮样式 */
+.tool-btn {
+    position: relative;
+}
+
+.tool-btn.active {
+    background: rgba(255, 200, 200, 0.5);
+    box-shadow: 0 0 0 2px #ff416c inset;
+}
+
+.tool-btn:hover:not(.active) {
+    background: rgba(230, 230, 230, 0.7);
+}
+
+/* 道具数量角标 */
+.tool-count {
+    transform: translate(50%, -50%);
+}
+
+.tool-ad-label {
+    transform: translate(50%, 50%);
+}
+
+/* 模态窗口动画 */
+.game-overlay {
+    transition: opacity 0.5s;
+}
+
+.game-modal {
+    transition: transform 0.5s;
+}
+
+/* 分数弹出动画 */
+@keyframes scorePopup {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: translate(-50%, -150%) scale(1.2);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -200%) scale(0.8);
+        opacity: 0;
+    }
+}
+
+/* 水果出现动画 */
+@keyframes appear {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* 合并脉冲动画 */
+@keyframes pulse {
+    0% {
+        transform: scale(0.5);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+/* 道具飞行动画 */
+@keyframes toolFly {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100px) scale(1.5);
+        opacity: 0;
+    }
+}
+
+/* 提示框淡入淡出动画 */
+@keyframes fadeInOut {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    10%,
+    90% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+}
+
+.active-tool {
+    box-shadow: 0 0 0 3px #fbbf24, 0 2px 8px #0002 !important;
+    z-index: 2;
+    border: 2px solid #fbbf24 !important;
+}
+.used {
+    filter: grayscale(1);
+    opacity: 0.5 !important;
+    pointer-events: none;
+}
+.selected-cell {
+    outline: 3px solid #fbbf24 !important;
+    z-index: 10;
+    box-shadow: 0 0 8px #fbbf24;
+}
+.fruit.selected {
+    outline: 3px solid #fbbf24 !important;
+    z-index: 20;
+    box-shadow: 0 0 8px #fbbf24;
+}
+
+/* 响应式设计 */
+@media (max-width: 400px) {
+    .game-container {
+        height: 97vh;
+    }
+
+    .score-box {
+        padding: 2px 8px;
+        font-size: 1.2rem;
+    }
+
+    .level-box p {
+        font-size: 1rem;
+    }
+
+    .target-panel {
+        padding: 3px 5px;
+    }
+
+    .next-fruit {
+        width: 2.2rem;
+        height: 2.2rem;
+        font-size: 1.1rem;
+    }
+
+    .steps-value {
+        width: 2rem;
+        height: 2rem;
+        font-size: 1rem;
+    }
+
+    .tools-container {
+        padding: 3px 5px;
+        margin: 0 5px 5px;
+    }
+
+    .tool-btn {
+        padding: 2px;
+    }
+
+    .tool-icon {
+        font-size: 1.1rem;
+    }
+
+    .game-modal {
+        padding: 1rem;
+    }
+
+    .modal-title {
+        font-size: 1.2rem;
+    }
+
+    .modal-message {
+        font-size: 0.9rem;
+    }
+
+    .stat-value {
+        font-size: 1.2rem;
+    }
+
+    .modal-btn {
+        padding: 0.4rem 1rem;
+        font-size: 0.8rem;
+    }
+}
